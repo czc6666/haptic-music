@@ -359,11 +359,12 @@ async function processFile() {
     }, 100);
     
     // 决定使用哪种处理方法
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     const isCrossOriginIsolated = window.crossOriginIsolated;
     let blob;
     
-    if (isCrossOriginIsolated) {
-      // 如果支持跨域隔离，尝试使用FFmpeg
+    if (!isMobile && isCrossOriginIsolated) {
+      // 如果不是移动设备且支持跨域隔离，尝试使用FFmpeg
       try {
         updateStatus('初始化FFmpeg...');
         const ffmpegData = await initFFmpeg();
@@ -438,8 +439,9 @@ async function processFile() {
         blob = await createSimpleHapticFile(currentFile);
       }
     } else {
-      // 否则使用简化版处理
-      updateStatus('使用简化版本处理...');
+      // 使用简化版处理
+      const reasonText = isMobile ? '检测到移动设备' : '浏览器不支持完整处理能力';
+      updateStatus(`${reasonText}，使用简化版本处理...`);
       blob = await createSimpleHapticFile(currentFile);
     }
     
