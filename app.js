@@ -403,7 +403,7 @@ async function processFile() {
               // 备选方案：双通道模式（更兼容）
               await ffmpeg.run(
                 '-i', inputFileName,
-                '-ac', '2',  // 指定双通道输出
+                '-ac', '3',  // 指定双通道输出
                 '-ar', '48000',
                 '-c:a', 'libvorbis',
                 '-af', 'bass=frequency=100:gain=6',  // 增强低频，提高震动效果
@@ -416,7 +416,7 @@ async function processFile() {
             // 默认模式：单声道版本，也增强低频
             await ffmpeg.run(
               '-i', inputFileName,
-              '-ac', '1',
+              '-ac', '3',
               '-ar', '48000',
               '-c:a', 'libvorbis',
               '-af', 'bass=frequency=100:gain=5',  // 增强低频，提高震动效果
