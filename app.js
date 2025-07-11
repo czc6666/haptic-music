@@ -1,5 +1,5 @@
 // 全局变量
-const MAX_FILE_SIZE = 12 * 1024 * 1024; // 12MB
+const MAX_FILE_SIZE = 500 * 1024 * 1024; // 500MB
 let currentFile = null;
 let isProcessing = false;
 let ffmpeg = null;
@@ -261,8 +261,13 @@ function handleFileSelect(file) {
   
   // 检查文件大小
   if (file.size > MAX_FILE_SIZE) {
-    showToast(`文件大小不能超过 12MB`, 'error');
+    showToast(`文件过大，超过500MB`, 'error');
     return;
+  }
+  
+  // 警告超过50MB的大文件
+  if (file.size > 50 * 1024 * 1024) {
+    showToast(`警告：大文件(${Math.round(file.size/1024/1024)}MB)可能导致浏览器变慢或崩溃`, 'warning');
   }
   
   // 设置当前文件并更新界面

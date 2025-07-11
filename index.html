@@ -71,7 +71,7 @@
 
     <div class="card">
       <h2>上传音频文件</h2>
-      <p class="description">支持 MP3、WAV、OGG、M4A 等格式，文件大小不超过 12MB</p>
+      <p class="description">支持 MP3、WAV、OGG、M4A 等格式，支持大文件处理（注意：超过50MB的文件可能导致浏览器变慢或在低配置电脑上崩溃）</p>
       
       <div id="drop-area" class="drop-area">
         <input type="file" id="file-input" accept="audio/*" style="display: none;">
@@ -134,6 +134,17 @@
       <div class="faq-item">
         <h3>为什么有时会使用"简化版"处理？</h3>
         <p>完整版骨传导转换器需要高级浏览器功能支持。移动设备浏览器通常不支持所需的音频处理能力，并且某些旧版本的桌面浏览器也可能缺少必要的功能。在这些情况下，系统会自动降级到简化版，它仍然可以添加ANDROID_HAPTIC标记，但音频处理能力有限。为了获得最佳体验，请使用PC端的Chrome或Edge浏览器访问。</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>处理大文件时需要注意什么？</h3>
+        <p>工具支持处理大型音频文件（最大500MB），但请注意：</p>
+        <ul style="margin-top: 0.5rem; margin-left: 1.5rem;">
+          <li>超过50MB的文件可能导致浏览器内存占用增加，处理速度变慢</li>
+          <li>在配置较低的电脑上，可能导致浏览器无响应或崩溃</li>
+          <li>处理大文件时请不要关闭页面，耐心等待完成</li>
+          <li>如果经常处理大文件，建议使用高配置电脑并关闭其他标签页</li>
+        </ul>
       </div>
     </div>
 
