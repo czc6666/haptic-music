@@ -28,21 +28,26 @@
       isolationStatusEl.style.padding = '0.5rem';
       isolationStatusEl.style.borderRadius = '0.25rem';
       
-      if (window.crossOriginIsolated) {
+      // 检测是否为移动设备
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      if (!isMobile && window.crossOriginIsolated) {
         isolationStatusEl.style.backgroundColor = '#d1fae5';
         isolationStatusEl.style.color = '#065f46';
-        isolationStatusEl.textContent = '✓ 跨域隔离已启用，可以使用完整版转换器';
+        isolationStatusEl.textContent = '✓ 浏览器兼容性检查通过，可以使用完整版转换器';
+      } else if (isMobile) {
+        warningEl.style.display = 'block';
+        isolationStatusEl.style.backgroundColor = '#fee2e2';
+        isolationStatusEl.style.color = '#b91c1c';
+        isolationStatusEl.innerHTML = `
+          <p>❌ 检测到您正在使用手机浏览器。手机浏览器不支持音频处理，请使用PC端的Chrome或Edge浏览器访问。</p>
+        `;
       } else {
         warningEl.style.display = 'block';
         isolationStatusEl.style.backgroundColor = '#fee2e2';
         isolationStatusEl.style.color = '#b91c1c';
         isolationStatusEl.innerHTML = `
-          <p>❌ 跨域隔离未启用。请尝试以下方法：</p>
-          <ol style="margin-top: 0.5rem; margin-left: 1.5rem;">
-            <li>使用Node.js服务器启动：<code>node server.js</code></li>
-            <li>确认访问的URL是 <code>http://localhost:8080</code> 而不是文件路径</li>
-            <li>检查控制台是否有COOP/COEP相关的错误</li>
-          </ol>
+          <p>❌ 浏览器不支持完整音频处理功能。请使用最新版的Chrome或Edge浏览器访问。</p>
         `;
       }
       
@@ -59,8 +64,8 @@
 
     <div id="browser-warning" class="warning" style="display: none;">
       <p>
-        ⚠️ 浏览器未启用跨域隔离，将使用简化版骨传导转换器。
-        这个版本可以生成带有ANDROID_HAPTIC标记的OGG文件，但音频质量可能不如完整版。
+        ⚠️ 检测到浏览器兼容性问题，将使用简化版骨传导转换器。
+        音频质量可能不如完整版，建议使用PC端的Chrome或Edge浏览器获得最佳体验。
       </p>
     </div>
 

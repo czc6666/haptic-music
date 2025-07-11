@@ -17,11 +17,14 @@ const statusText = document.getElementById('status-text');
 const advancedMode = document.getElementById('advanced-mode');
 const browserWarning = document.getElementById('browser-warning');
 
-// 检查跨域隔离状态
+// 检查浏览器兼容性和设备类型
 function checkIsolation() {
+  // 检测是否为移动设备
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   const isCrossOriginIsolated = window.crossOriginIsolated;
   
-  if (!isCrossOriginIsolated) {
+  // 如果是移动设备或不支持跨域隔离，则显示警告
+  if (isMobile || !isCrossOriginIsolated) {
     browserWarning.style.display = 'block';
   }
 }
