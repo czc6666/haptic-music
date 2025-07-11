@@ -1,0 +1,21 @@
+{
+  "name": "骨传导音乐转换器",
+  "short_name": "骨传导转换器",
+  "description": "将普通音频转换为带震动标记的OGG格式，实现在支持的设备上触发骨传导效果",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f9fafb",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+} 

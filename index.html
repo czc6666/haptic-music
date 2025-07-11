@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>骨传导音乐转换器 - Bone Vibe Maker</title>
+  
+  <meta name="description" content="将普通音频转换为带震动标记的OGG格式，实现在支持的设备上触发骨传导效果">
+  
+  <!-- PWA 支持 -->
+  <meta name="theme-color" content="#2563eb">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  
+  <!-- 预加载FFmpeg WASM库 -->
+  <link rel="preload" href="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js" as="script">
+  
+  <!-- 样式 -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- 检测跨域隔离状态 -->
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const warningEl = document.getElementById('browser-warning');
+      const isolationStatusEl = document.createElement('div');
+      isolationStatusEl.id = 'isolation-status';
+      isolationStatusEl.style.marginTop = '1rem';
+      isolationStatusEl.style.padding = '0.5rem';
+      isolationStatusEl.style.borderRadius = '0.25rem';
+      
+      if (window.crossOriginIsolated) {
+        isolationStatusEl.style.backgroundColor = '#d1fae5';
+        isolationStatusEl.style.color = '#065f46';
+        isolationStatusEl.textContent = '✓ 跨域隔离已启用，可以使用完整版转换器';
+      } else {
+        warningEl.style.display = 'block';
+        isolationStatusEl.style.backgroundColor = '#fee2e2';
+        isolationStatusEl.style.color = '#b91c1c';
+        isolationStatusEl.innerHTML = `
+          <p>❌ 跨域隔离未启用。请尝试以下方法：</p>
+          <ol style="margin-top: 0.5rem; margin-left: 1.5rem;">
+            <li>使用Node.js服务器启动：<code>node server.js</code></li>
+            <li>确认访问的URL是 <code>http://localhost:8080</code> 而不是文件路径</li>
+            <li>检查控制台是否有COOP/COEP相关的错误</li>
+          </ol>
+        `;
+      }
+      
+      warningEl.appendChild(isolationStatusEl);
+    });
+  </script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>骨传导音乐转换器</h1>
+      <p class="description">将普通音频转换为带震动标记的OGG格式，实现在支持的设备上触发骨传导效果</p>
+    </header>
+
+    <div id="browser-warning" class="warning" style="display: none;">
+      <p>
+        ⚠️ 浏览器未启用跨域隔离，将使用简化版骨传导转换器。
+        这个版本可以生成带有ANDROID_HAPTIC标记的OGG文件，但音频质量可能不如完整版。
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>上传音频文件</h2>
+      <p class="description">支持 MP3、WAV、OGG、M4A 等格式，文件大小不超过 12MB</p>
+      
+      <div id="drop-area" class="drop-area">
+        <input type="file" id="file-input" accept="audio/*" style="display: none;">
+        <div class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+          </svg>
+        </div>
+        <p>拖放文件到此处或点击上传</p>
+        <div id="file-name" style="margin-top: 0.75rem; font-weight: 500; display: none;"></div>
+      </div>
+
+      <div id="progress-container" class="progress-container" style="display: none;">
+        <p id="status-text" style="margin-bottom: 0.5rem;">准备处理...</p>
+        <div class="progress-bar">
+          <div id="progress-bar-fill" class="progress-bar-fill" style="width: 0%;"></div>
+        </div>
+        <p id="progress-text" style="text-align: right; font-size: 0.875rem; margin-top: 0.25rem;">0%</p>
+      </div>
+
+      <div class="switch-container">
+        <label class="switch">
+          <input type="checkbox" id="advanced-mode" checked>
+          <span class="slider"></span>
+        </label>
+        <span>高级模式（多通道输出，震动效果增强）</span>
+      </div>
+
+      <div class="btn-group">
+        <button id="clear-btn" class="btn btn-outline" disabled>清除</button>
+        <button id="process-btn" class="btn btn-primary" disabled>开始转换</button>
+      </div>
+    </div>
+
+    <div class="instructions">
+      <h2>使用说明</h2>
+      <ol>
+        <li>上传音频文件（支持大多数常见音频格式）</li>
+        <li>默认已启用高级模式（多通道输出，震动效果更强）</li>
+        <li>点击"开始转换"按钮</li>
+        <li>等待处理完成，文件将自动下载</li>
+        <li>在 Android 12+ 设备上，将下载的文件设置为铃声</li>
+        <li>播放时将能感受到骨传导带来的震动效果</li>
+      </ol>
+    </div>
+
+    <div class="faq">
+      <h2>常见问题</h2>
+      
+      <div class="faq-item">
+        <h3>什么是骨传导音乐？</h3>
+        <p>骨传导是一种通过头骨传递声音的技术，可以让声音直接传到内耳，而不通过耳朵的空气传导。这项技术被广泛应用于助听设备、运动耳机和一些现代手机。通过添加特定的震动频率，可以增强低音效果并提供更加沉浸的音频体验。</p>
+      </div>
+      
+      <div class="faq-item">
+        <h3>如何在Android手机上使用生成的文件？</h3>
+        <p>下载转换后的OGG文件，将其传输到您的Android手机，然后在系统设置中将其设置为铃声、闹钟或通知音。当文件播放时，支持的设备将自动识别ANDROID_HAPTIC标记并触发振动马达，产生骨传导效果。</p>
+      </div>
+      
+      <div class="faq-item">
+        <h3>为什么有时会使用"简化版"处理？</h3>
+        <p>完整版骨传导转换器使用FFmpeg.wasm，它需要浏览器支持SharedArrayBuffer，而这要求启用跨域隔离(COOP/COEP)。如果浏览器不支持或没有启用这些功能，我们会自动降级到简化版，它仍然可以添加ANDROID_HAPTIC标记，但音频处理能力有限。</p>
+      </div>
+    </div>
+
+    <footer>
+      <p>© 2024 Bone-Vibe Maker | 使用 FFmpeg.wasm 技术</p>
+      <p><a href="https://github.com/yourusername/bone-vibe-maker" target="_blank" rel="noopener noreferrer">GitHub</a></p>
+    </footer>
+  </div>
+
+  <!-- 加载FFmpeg WASM库 -->
+  <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
+  
+  <!-- 主要脚本 -->
+  <script src="app.js"></script>
+</body>
+</html>
