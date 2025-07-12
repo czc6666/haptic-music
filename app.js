@@ -406,7 +406,7 @@ async function processFile() {
                 '-ac', '3',  // 指定双通道输出
                 '-ar', '48000',
                 '-c:a', 'libvorbis',
-                '-af', 'bass=frequency=100:gain=6',  // 增强低频，提高震动效果
+                '-af', 'bass=frequency=100:gain=6',  // 增强低频，提高震动效果 frequency是频率，gain是增益
                 '-q:a', '4',  // 提高音频质量
                 '-metadata:s:a:0', 'ANDROID_HAPTIC=1',  // 在第一个音频流添加标记
                 outputFileName
